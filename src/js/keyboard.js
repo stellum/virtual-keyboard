@@ -1,5 +1,6 @@
 export class Keyboard {
   #switchEl; // Private class fields = class의 속성(property)들은 기본적으로 public하며 class 외부에서 읽히고 수정될 수 있다. 하지만 ES2019 에서는 해쉬 # prefix를 추가해 private class 필드를 선언할 수 있게 되었다.   ;
+  #fontSelectEl;
   constructor() {
     this.#assignElement();
     this.#addEvent();
@@ -7,6 +8,7 @@ export class Keyboard {
 
   #assignElement() {
     this.#switchEl = document.getElementById("switch");
+    this.#fontSelectEl = document.getElementById("font");
   }
 
   #addEvent() {
@@ -16,6 +18,10 @@ export class Keyboard {
         event.target.checked ? "dark-mode" : ""
       );
       console.log(event.target.checked);
+    });
+    this.#fontSelectEl.addEventListener("change", (event) => {
+      document.body.style.fontFamily = event.target.value;
+      console.log(event.target.value);
     });
   }
 }
