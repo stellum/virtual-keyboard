@@ -20,19 +20,16 @@ export class Keyboard {
     this.#fontSelectEl.addEventListener("change", this.#onChangeFont);
     document.addEventListener("keydown", (event) => {
       console.log(event.code);
-      if (this.#keyboardEl.querySelector(`[data-code=${event.code}]`)) {
-        this.#keyboardEl
-          .querySelector(`[data-code=${event.code}]`)
-          ?.classList.add("active");
-      }
+
+      this.#keyboardEl
+        .querySelector(`[data-code=${event.code}]`)
+        ?.classList.add("active");
     });
     document.addEventListener("keyup", (event) => {
       // console.log("keyup");
-      if (this.#keyboardEl.querySelector(`[data-code=${event.code}]`)) {
-        this.#keyboardEl
-          .querySelector(`[data-code=${event.code}]`)
-          ?.classList.remove("active");
-      }
+      this.#keyboardEl
+        .querySelector(`[data-code=${event.code}]`)
+        ?.classList.remove("active");
     });
   }
 
