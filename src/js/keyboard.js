@@ -3,6 +3,8 @@ export class Keyboard {
   #fontSelectEl;
   #containerEl;
   #keyboardEl;
+  #inputGroupEl;
+  #inputEl;
   constructor() {
     this.#assignElement();
     this.#addEvent();
@@ -13,24 +15,38 @@ export class Keyboard {
     this.#switchEl = this.#containerEl.querySelector("#switch");
     this.#fontSelectEl = this.#containerEl.querySelector("#font");
     this.#keyboardEl = this.#containerEl.querySelector("#keyboard");
+    this.#inputGroupEl = this.#containerEl.querySelector("#input-group");
+    this.#inputEl = this.#inputGroupEl.querySelector("#input");
   }
 
   #addEvent() {
     this.#switchEl.addEventListener("change", this.#onChangeTheme);
     this.#fontSelectEl.addEventListener("change", this.#onChangeFont);
-    document.addEventListener("keydown", (event) => {
-      console.log(event.code);
+    document.addEventListener("keydown", this.#onKeyDown.bind(this));
+    document.addEventListener("keyup", this.#onKeyUp.bind(this));
+    this.#inputEl.addEventListener("input", this.#onInput);
+  }
 
-      this.#keyboardEl
-        .querySelector(`[data-code=${event.code}]`)
-        ?.classList.add("active");
-    });
-    document.addEventListener("keyup", (event) => {
-      // console.log("keyup");
-      this.#keyboardEl
-        .querySelector(`[data-code=${event.code}]`)
-        ?.classList.remove("active");
-    });
+  #onInput(event) {
+    event.target.value = event.target.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/, "");
+  }
+
+  #onKeyDown(event) {
+    // toggle( string, [, force] ) = 두번째 인수가 true 로 평가되면 지정한 클래스 값을 추가하고 false 로 평가되면 제거한다. 즉, 한글 입력이 되는지 안되는지 true/false로 반환하여 체크.
+    this.#inputGroupEl.classList.toggle(
+      "error",
+      /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(event.key)
+    );
+    // console.log(event.key, /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(event.key));
+    this.#keyboardEl
+      .querySelector(`[data-code=${event.code}]`)
+      ?.classList.add("active");
+  }
+
+  #onKeyUp(event) {
+    this.#keyboardEl
+      .querySelector(`[data-code=${event.code}]`)
+      ?.classList.remove("active");
   }
 
   #onChangeTheme(event) {
