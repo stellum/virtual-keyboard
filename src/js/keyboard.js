@@ -5,6 +5,8 @@ export class Keyboard {
   #keyboardEl;
   #inputGroupEl;
   #inputEl;
+  #keyPress = false;
+  #mouseDown = false;
   constructor() {
     this.#assignElement();
     this.#addEvent();
@@ -25,11 +27,16 @@ export class Keyboard {
     document.addEventListener("keydown", this.#onKeyDown.bind(this));
     document.addEventListener("keyup", this.#onKeyUp.bind(this));
     this.#inputEl.addEventListener("input", this.#onInput);
-    this.#keyboardEl.addEventListener("mousedown", this.#onMouseDown);
+    this.#keyboardEl.addEventListener(
+      "mousedown",
+      this.#onMouseDown.bind(this)
+    );
     document.addEventListener("mouseup", this.#onMouseUp.bind(this));
   }
 
   #onMouseUp(event) {
+    if (this.#keyPress) return;
+    this.#mouseDown = false;
     const keyEl = event.target.closest("div.key");
     const isActive = !!keyEl?.classList.contains("active");
     const val = keyEl?.dataset.val;
@@ -46,6 +53,8 @@ export class Keyboard {
   }
 
   #onMouseDown(event) {
+    if (this.#keyPress) return;
+    this.#mouseDown = true;
     event.target.closest("div.key")?.classList.add("active");
   }
 
@@ -54,6 +63,8 @@ export class Keyboard {
   }
 
   #onKeyDown(event) {
+    if (this.#mouseDown) return;
+    this.#keyPress = true;
     // toggle( string, [, force] ) = 두번째 인수가 true 로 평가되면 지정한 클래스 값을 추가하고 false 로 평가되면 제거한다. 즉, 한글 입력이 되는지 안되는지 true/false로 반환하여 체크.
     this.#inputGroupEl.classList.toggle(
       "error",
@@ -66,6 +77,8 @@ export class Keyboard {
   }
 
   #onKeyUp(event) {
+    if (this.#mouseDown) return;
+    this.#keyPress = false;
     this.#keyboardEl
       .querySelector(`[data-code=${event.code}]`)
       ?.classList.remove("active");
